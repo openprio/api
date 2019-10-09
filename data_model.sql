@@ -16,6 +16,6 @@ CREATE TABLE devices_registered
 (
   device_id character varying(128) NOT NULL,
   registered_at timestamp NOT NULL,
-  public_transport_agency varying(255) NOT NULL,
+  public_transport_agency character varying(255) NOT NULL,
   PRIMARY KEY(device_id)
 );

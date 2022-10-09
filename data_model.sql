@@ -12,10 +12,13 @@ CREATE TABLE vmq_auth_acl
    CONSTRAINT vmq_auth_acl_primary_key PRIMARY KEY (mountpoint, client_id, username)
 );
 
-CREATE TABLE devices_registered
+CREATE TABLE vehicle_pre_registration
 (
-  device_id character varying(128) NOT NULL,
-  registered_at timestamp NOT NULL,
-  public_transport_agency character varying(255) NOT NULL,
-  PRIMARY KEY(device_id)
+  data_owner_code character varying(50) NOT NULL,
+  vehicle_number character varying(50) NOT NULL,
+  token character varying(128),
+  created_at timestamp NOT NULL,
+  used_on timestamp,
+  -- enforce that only one vehicle can be registered with the same data_owner_code, vehicle_number combination.
+  PRIMARY KEY (data_owner_code, vehicle_number)
 );

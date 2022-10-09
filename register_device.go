@@ -1,14 +1,14 @@
 package main
 
-import(
+import (
 	"encoding/json"
-	"net/http"
 	"log"
-	
+	"net/http"
+
 	"openprio_api/rand"
 )
 
-type RegisterDevice struct  {
+type RegisterDevice struct {
 	DeviceId string `json:"device_id"`
 	Passcode string `json:"passcode"`
 }
@@ -16,15 +16,13 @@ type RegisterDevice struct  {
 type DeviceCredentials struct {
 	ClientId string `json:"client_id"`
 	Username string `json:"username"`
-	Token string `json:"token"`
+	Token    string `json:"token"`
 }
 
 type ResponseError struct {
-	Msg string `json:"error_message"`
-	StatusCode int `json:"status_code"`
+	Msg        string `json:"error_message"`
+	StatusCode int    `json:"status_code"`
 }
-
-
 
 func (db *DB) RegisterDevice(w http.ResponseWriter, r *http.Request) {
 	device := RegisterDevice{}
@@ -58,7 +56,7 @@ func (db *DB) registerDeviceDB(device RegisterDevice) (*DeviceCredentials, error
 	deviceCredentials.Token = rand.String(32)
 
 	// In the future the public_acl and subscribe_acl can be further limited by registering vehicle_number and data_owner code at registration.
-	// Because an onboard computer is normally not swapped between buses. 
+	// Because an onboard computer is normally not swapped between buses.
 	query := `
 	WITH x AS (
 		SELECT

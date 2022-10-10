@@ -35,11 +35,11 @@ The operator communicates to the administrator of OpenPrio that the operator wan
 ]
 ```
 
-1. Distributing pre-registrations to vehicles
+2. Distributing pre-registrations to vehicles
 
 The operator should distribute the pre-registrations of the vehicles to the OBC's of the vehicles. This can be done manually, but preferably in an automatic way. 
 
-1. Exchanging pre-registration for registration
+3. Exchanging pre-registration for registration
 
 When a vehicle receives a new pre-registration it should exchange the pre-registration for a final registration by making an HTTP-call to the the /register_vehicle endpoint. 
 
@@ -62,13 +62,14 @@ In return it receives a client_id, username and token it can uses to connect wit
 }
 ```
 
-1. Connecting with MQTT-broker
+4. Connecting with MQTT-broker
 
 With the aquired credentials you can connect with the OpenPrio MQTT broker, the MQTT broker is reachable on mqtt.openprio.nl:8883. The following topics can be used. 
 
 publish (to send position, data is expected in the following format https://github.com/openprio/specification/blob/master/openprio_pt_position_data.proto):
 - /prod/pt/position/<data_owner_code>/vehicle_number/<vehicle_number>
 - /test/pt/position/<data_owner_code>/vehicle_number/<vehicle_number>
+
 subscribe (to receive feedback from TLC, data can be expected in the following format https://github.com/openprio/specification/blob/master/ssm.proto):
 - /prod/pt/ssm/<data_owner_code>/vehicle_number/<vehicle_number>
 - /test/pt/ssm/<data_owner_code>/vehicle_number/<vehicle_number>

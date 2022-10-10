@@ -18,7 +18,7 @@ CREATE TABLE vehicle_pre_registration
   vehicle_number character varying(50) NOT NULL,
   token character varying(128),
   created_at timestamp NOT NULL,
-  used_on timestamp,
+  used_at timestamp,
   -- enforce that only one vehicle can be registered with the same data_owner_code, vehicle_number combination.
   PRIMARY KEY (data_owner_code, vehicle_number)
 );

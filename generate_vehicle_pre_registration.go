@@ -87,7 +87,6 @@ func (db *DB) checkIfVehicleAlreadyRegistered(vehiclePreRegistration VehiclePreR
     		ELSE false
 		END
 	`
-	db.db.Exec(query, vehiclePreRegistration.DataOwnerCode, vehiclePreRegistration.VehicleNumber)
 	var result bool
 	err := db.db.QueryRow(query, vehiclePreRegistration.DataOwnerCode, vehiclePreRegistration.VehicleNumber).Scan(&result)
 	return result, err

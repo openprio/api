@@ -1,4 +1,4 @@
-FROM golang as builder
+FROM golang:1.21 as builder
 RUN mkdir /go/src/openprio_api
 WORKDIR /go/src/openprio_api
 COPY . .

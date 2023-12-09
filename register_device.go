@@ -76,7 +76,7 @@ func (db *DB) saveAcl(username string) error {
 	if err != nil {
 		return err
 	}
-	db.db.Exec(query, username, "subscribe", "/test/pt/ssm/+/vehicle_number/+'")
+	db.db.Exec(query, username, "subscribe", "/test/pt/ssm/+/vehicle_number/+")
 	db.db.Exec(query, username, "publish", "/prod/pt/position/+/vehicle_number/+")
 	db.db.Exec(query, username, "publish", "/test/pt/position/+/vehicle_number/+")
 	return nil

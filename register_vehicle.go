@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"openprio_api/rand"
 )
@@ -90,46 +91,23 @@ func (db *DB) checkToken(vehiclePreRegistration VehiclePreRegistration) (bool, e
 	return result, err
 }
 
-func (db *DB) registerVehicle(vehicle VehiclePreRegistration) (DeviceCredentials, error) {
+func (db *DB) registerVehicle(vehicle VehiclePreRegistration) (*DeviceCredentials, error) {
 	clientId := fmt.Sprintf("vehicle:%s:%s", vehicle.DataOwnerCode, vehicle.VehicleNumber)
 	deviceCredentials := DeviceCredentials{ClientId: clientId, Username: clientId}
 	deviceCredentials.Token = rand.String(50)
 
-	query := `
-	WITH x AS (
-		SELECT
-		    	''::text AS mountpoint,
-				$1::text AS client_id,
-		       	$2::text AS username,
-		       	$3::text AS password,
-		       	gen_salt('bf')::text AS salt,
-		       	$4::json AS publish_acl,
-		       	$5::json AS subscribe_acl
-		)
-	INSERT INTO vmq_auth_acl (mountpoint, client_id, username, password, publish_acl, subscribe_acl)
-	SELECT
-		x.mountpoint,
-		x.client_id,
-		x.username,
-		crypt(x.password, x.salt),
-		publish_acl,
-		subscribe_acl
-	FROM x;
-	`
-	positionProdTopic := fmt.Sprintf(`[
-		{"pattern": "/prod/pt/position/%[1]s/vehicle_number/%[2]s"},
-		{"pattern": "/test/pt/position/%[1]s/vehicle_number/%[2]s"}
-	]`, vehicle.DataOwnerCode, vehicle.VehicleNumber)
-	ssmProdTopic := fmt.Sprintf(`[
-		{"pattern": "/prod/pt/ssm/%[1]s/vehicle_number/%[2]s"},
-		{"pattern": "/test/pt/ssm/%[1]s/vehicle_number/%[2]s"}
-	]`, vehicle.DataOwnerCode, vehicle.VehicleNumber)
-
-	_, err := db.db.Exec(query, deviceCredentials.ClientId, deviceCredentials.Username, deviceCredentials.Token, positionProdTopic, ssmProdTopic)
+	err := db.saveAccount(deviceCredentials.Username, deviceCredentials.Token)
 	if err != nil {
-		return DeviceCredentials{}, err
+		log.Print("Something went wrong with storing mqtt_user")
+		return nil, err
 	}
-	return deviceCredentials, err
+
+	err = db.saveAcl(deviceCredentials.Username)
+	if err != nil {
+		return nil, err
+	}
+
+	return &deviceCredentials, err
 }
 
 func (db *DB) setPreRegistrationUsed(vehicle VehiclePreRegistration) {

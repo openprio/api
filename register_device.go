@@ -68,7 +68,7 @@ func (db *DB) saveAccount(username string, token string) error {
 	return err
 }
 
-func (db *DB) saveAcl(username string) error {
+func (db *DB) saveAcl(username string, allow_secondary_feed bool) error {
 	query := `INSERT INTO mqtt_acl (username, clientid, action, permission, topic)
 	VALUES ($1, $1, $2, 'allow', $3)
 	`
@@ -79,6 +79,10 @@ func (db *DB) saveAcl(username string) error {
 	db.db.Exec(query, username, "subscribe", "/test/pt/ssm/+/vehicle_number/+")
 	db.db.Exec(query, username, "publish", "/prod/pt/position/+/vehicle_number/+")
 	db.db.Exec(query, username, "publish", "/test/pt/position/+/vehicle_number/+")
+	if allow_secondary_feed {
+		db.db.Exec(query, username, "publish", "/prod/pt/position-secondary/+/vehicle_number/+")
+		db.db.Exec(query, username, "publish", "/test/pt/position-secondary/+/vehicle_number/+")
+	}
 	return nil
 }
 
@@ -92,7 +96,7 @@ func (db *DB) registerDeviceDB(device RegisterDevice) (*DeviceCredentials, error
 		return nil, err
 	}
 
-	err = db.saveAcl(deviceCredentials.Username)
+	err = db.saveAcl(deviceCredentials.Username, true)
 	if err != nil {
 		return nil, err
 	}

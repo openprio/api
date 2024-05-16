@@ -102,7 +102,7 @@ func (db *DB) registerVehicle(vehicle VehiclePreRegistration) (*DeviceCredential
 		return nil, err
 	}
 
-	err = db.saveAcl(deviceCredentials.Username)
+	err = db.saveAcl(deviceCredentials.Username, false)
 	if err != nil {
 		return nil, err
 	}

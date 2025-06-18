@@ -96,7 +96,11 @@ func (db *DB) registerVehicle(vehicle VehiclePreRegistration) (*DeviceCredential
 	deviceCredentials := DeviceCredentials{ClientId: clientId, Username: clientId}
 	deviceCredentials.Token = rand.String(50)
 
-	err := db.saveAccount(deviceCredentials.Username, deviceCredentials.Token)
+	err := db.deleteAccount(deviceCredentials.Username)
+	if err != nil {
+		log.Print("Something went wrong with deleting mqtt_uses ")
+	}
+	err = db.saveAccount(deviceCredentials.Username, deviceCredentials.Token)
 	if err != nil {
 		log.Print("Something went wrong with storing mqtt_user")
 		return nil, err

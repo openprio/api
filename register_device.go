@@ -51,6 +51,15 @@ func (db *DB) RegisterDevice(w http.ResponseWriter, r *http.Request) {
 	rnd.JSON(w, http.StatusForbidden, result)
 }
 
+func (db *DB) deleteAccount(username string) error {
+	query := `DELETE 
+	FROM mqtt_user 
+	WHERE username = $1::text
+	`
+	_, err := db.db.Exec(query, username)
+	return err
+}
+
 func (db *DB) saveAccount(username string, token string) error {
 	query := `WITH x AS (
 		SELECT

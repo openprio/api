@@ -23,3 +23,6 @@ scripts/*.csv
 go.work
 .env
 deployment.yaml
+
+.DS_Store
+ENV
